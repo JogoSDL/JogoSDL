@@ -1,0 +1,135 @@
+
+#include <stdio.h>
+#include <SDL2/SDL_image.h>
+#include <stdlib.h>
+
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
+int gameRunning = 1;
+
+int main( int argc, char* args[] )
+{
+    //Variavel que vai representar a janela(window)
+    SDL_Window* window = NULL;
+    
+    //Surface que vai conter nossa janela(window)
+    SDL_Surface* gScreen = NULL;
+    
+    SDL_Surface* gBackground = NULL;
+    SDL_Surface* gPlayer = NULL;
+    
+    
+    //Velocidade
+    float velx = 5.5;
+    float  vely = 5.5;
+    
+    
+    //Largura total( largura da imagem ineteira do player)
+    int player_fullwidth = 424;
+    
+    
+    
+    //Largura e altura do dos frames do player
+    int player_frame_width = 80;
+    int player_frame_height = 80;
+    
+    SDL_Rect player_frame, player_position;
+    
+    //Nosso rect pra representar o frame
+    player_frame.x = 0;
+    player_frame.y = 0;
+    player_frame.w = player_frame_width;
+    player_frame.h = player_frame_height;
+    
+    
+    
+    //Nosso rect para representar a posição do player na tela
+    player_position.x = SCREEN_WIDTH/2;
+    player_position.y = SCREEN_HEIGHT/2;
+    player_position.w = player_frame_width;
+    player_position.h = player_frame_height;
+    
+    gBackground = SDL_LoadBMP("c1.bmp");
+    gPlayer = IMG_Load("j2.bmp");
+    
+    //Initialize SDL
+    SDL_Init(SDL_INIT_VIDEO);
+
+    //Create window
+    window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+    //Get window surface
+    gScreen = SDL_GetWindowSurface( window );
+    
+    //Create the event
+    SDL_Event event;
+                              
+            while(gameRunning){
+            
+                //Checar se há eventos
+                if(SDL_PollEvent(&event)){
+                    
+                    if(event.type == SDL_QUIT){
+                        gameRunning = 0;
+                    }
+                    //Verifica se houve evento de KEYDOWN = tecla pressionada
+                    if(event.type == SDL_KEYDOWN){
+                           
+                           switch(event.key.keysym.sym){
+                                   
+                                   //Caso tecla direita seja pressionada
+                                   // incrementa player_position.x para movimentar o frame na direçao onde o eixo x cresce(direita)
+                               case SDLK_RIGHT: player_position.x += velx; 
+                                                player_frame.x = 187;
+                                   break;
+                                case SDLK_LEFT : player_position.x -= velx; 
+                                                    player_frame.x = 305;  
+         							break;
+
+         						case SDLK_UP   : player_position.y -= vely;
+                                                player_frame.x = 425;
+
+
+                                      break;          
+
+         						case SDLK_DOWN  : player_position.y	+= vely;
+                                                 player_frame.x = 65;
+         							break;
+
+         							break;		                          
+                                   //Façam ele ir para esquerda, cima, baixo :D
+                           }
+                    }
+                    
+
+                    
+                }
+                
+                
+                
+            
+            
+            SDL_BlitSurface(gBackground, NULL, gScreen, NULL);
+            SDL_BlitSurface(gPlayer, NULL, gScreen, NULL);
+            SDL_BlitSurface(gPlayer, &player_frame, gScreen, &player_position);
+            
+            //Update the surface
+            SDL_UpdateWindowSurface( window );
+            
+            //Wait two seconds
+            SDL_Delay(30);
+                
+            }
+    
+    //Liberar as imagens da memória
+    SDL_FreeSurface(gBackground);
+    SDL_FreeSurface(gPlayer);
+    
+    //Destruir janela
+    SDL_DestroyWindow( window );
+    
+    //Encerrar o SDL
+    SDL_Quit();
+    
+    return 0;
+}
